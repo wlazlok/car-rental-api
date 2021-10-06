@@ -1,0 +1,52 @@
+server:
+  port: 9010
+  error:
+    whitelabel:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: gateway,info,health,metrics
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      metrics:
+        enabled: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+#      default-filters:
+#        - RemoveResponseHeader=WWW-Authenticate
+#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin X-Correlation-ID
+      routes:
+        - id: ds-react
+          predicates:
+            - Path=/api/react/**
+          uri: http://localhost:9000
+        - id: ds-read
+          predicates:
+            - Path=/ds/read/**
+          uri: http://localhost:8910
+        - id: ds-update
+          predicates:
+            - Path=/ds/update/**
+          uri: http://localhost:8911
+        - id: ds-admin
+          predicates:
+            - Path=/admin/**
+          uri: http://localhost:8920
+      discovery:
+        locator:
+          enabled: false
+
+logging:
+  level:
+    root: info

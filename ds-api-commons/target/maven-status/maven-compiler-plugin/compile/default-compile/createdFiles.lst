@@ -1,0 +1,5 @@
+karol\wlazlo\commons\clients\DSUpdateClient.class
+karol\wlazlo\commons\clients\DSReadClient.class
+karol\wlazlo\commons\repositories\ProductItemRepository.class
+karol\wlazlo\commons\repositories\CommentItemRepository.class
+karol\wlazlo\commons\repositories\DetailProductItemRepository.class
