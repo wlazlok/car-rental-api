@@ -3,6 +3,7 @@ package karol.wlazlo.ds.admin.controllers;
 import karol.wlazlo.commons.clients.DSReadClient;
 import karol.wlazlo.commons.clients.DSUpdateClient;
 import karol.wlazlo.model.Admin.Product.ProductsListResponse;
+import karol.wlazlo.model.ProductItem.DeleteProductItemResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,10 @@ public class ProductController {
     @PostMapping("/update")
     public ResponseEntity<ProductItemResponse> updateProduct(@RequestBody ProductItem productItem) {
         return dsUpdateClient.updateProduct(productItem);
+    }
+
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<DeleteProductItemResponse> deleteProduct(@PathVariable("productId") Long productId) {
+        return dsUpdateClient.deleteProductById(productId);
     }
 }

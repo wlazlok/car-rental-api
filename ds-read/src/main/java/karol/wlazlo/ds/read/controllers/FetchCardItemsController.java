@@ -36,7 +36,7 @@ public class FetchCardItemsController {
                         .map(item -> CardItem.builder()
                                 .productId(item.getId())
                                 .productName(item.getProductName())
-                                .cloudinaryMainImageId(item.getCloudinaryIds().get(0).getCloudinaryId())
+                                .cloudinaryMainImageId(!item.getCloudinaryIds().isEmpty() ? item.getCloudinaryIds().get(0).getCloudinaryId() : null)
                                 .build())
                         .collect(Collectors.toList()));
 

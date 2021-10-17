@@ -1,10 +1,14 @@
 package karol.wlazlo.commons.clients;
 
 import karol.wlazlo.model.CommentItem.CommentRequest;
+import karol.wlazlo.model.ProductItem.DeleteProductItemResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
+import karol.wlazlo.model.Response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,4 +20,7 @@ public interface DSUpdateClient {
 
     @PostMapping("/product")
     ResponseEntity<ProductItemResponse> updateProduct(@RequestBody ProductItem productItem);
+
+    @DeleteMapping("/product/{productId}")
+    ResponseEntity<DeleteProductItemResponse> deleteProductById(@PathVariable("productId") Long productId);
 }
