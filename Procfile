@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/libs/*.jar
+web: java -Dserver.port=$PORT -jar ds-react/target/ds-react-1.0.1.jar
