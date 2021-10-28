@@ -16,7 +16,7 @@ spring:
       metrics:
         enabled: true
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin Access-Control-Expose-Headers
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -46,6 +46,7 @@ spring:
       discovery:
         locator:
           enabled: false
+
 
 logging:
   level:
