@@ -4,6 +4,8 @@ import karol.wlazlo.model.CommentItem.CommentRequest;
 import karol.wlazlo.model.ProductItem.DeleteProductItemResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
+import karol.wlazlo.model.Register.RegisterForm;
+import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.Response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -23,4 +25,10 @@ public interface DSUpdateClient {
 
     @DeleteMapping("/product/{productId}")
     ResponseEntity<DeleteProductItemResponse> deleteProductById(@PathVariable("productId") Long productId);
+
+    @PostMapping("/user/register")
+    ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm);
+
+    @PostMapping("/user/reset-password")
+    ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm);
 }

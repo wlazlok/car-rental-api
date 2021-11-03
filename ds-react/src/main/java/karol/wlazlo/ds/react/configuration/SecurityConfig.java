@@ -16,10 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import javax.crypto.SecretKey;
 
@@ -27,6 +23,9 @@ import javax.crypto.SecretKey;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final String[] acceptedPaths = new String[]{"/api/react/products", "/api/react/product/prices", "/api/react/product/*/details",
+            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register"};
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;
@@ -54,7 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
 //                .antMatchers("/*", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/api/react/products").hasAnyRole(Role.ADMIN.name())
+//                .antMatchers("/api/react/products").hasAnyRole(Role.ADMIN.name())
+                .antMatchers(acceptedPaths).permitAll()
                 .anyRequest()
                 .authenticated();
 //                .permitAll();

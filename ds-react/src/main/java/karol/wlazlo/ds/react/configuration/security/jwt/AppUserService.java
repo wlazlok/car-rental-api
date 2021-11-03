@@ -1,6 +1,7 @@
 package karol.wlazlo.ds.react.configuration.security.jwt;
 
 import karol.wlazlo.commons.clients.DSReadClient;
+import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ public class AppUserService implements UserDetailsService {
     private DSReadClient dsReadClient;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = null;
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        AppUser user;
 
         try {
-            user = dsReadClient.getUserByUsername(username);
+            user = dsReadClient.getUserByEmail(ResetPasswordForm.builder().email(email).build());
         } catch (Exception ex) {
             ex.printStackTrace();
             //todo obsluga wyjątków logi
@@ -30,7 +31,7 @@ public class AppUserService implements UserDetailsService {
         }
 
         if (user == null) {
-            throw new UsernameNotFoundException("usre not found");
+            throw new UsernameNotFoundException("user not found");
         } else {
             return user;
         }

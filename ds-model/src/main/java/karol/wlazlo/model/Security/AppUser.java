@@ -21,6 +21,8 @@ import java.util.List;
 @Setter
 public class AppUser implements UserDetails {
 
+    //todo: uporządkować, walidacje itp.
+
     @Transient
     private final String ROLE_PREFIX = "ROLE_";
 
@@ -32,8 +34,7 @@ public class AppUser implements UserDetails {
 
     private String username;
 
-//    @Email
-//    private String email;
+    private String email;
 
     private boolean isAccountNonExpired;
 

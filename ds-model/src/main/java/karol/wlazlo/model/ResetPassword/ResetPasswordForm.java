@@ -1,4 +1,4 @@
-package karol.wlazlo.model.ErrorMessage;
+package karol.wlazlo.model.ResetPassword;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorMessage {
+public class ResetPasswordForm {
 
-    private String message;
-    private String errorCode;
+    private String email;
 }

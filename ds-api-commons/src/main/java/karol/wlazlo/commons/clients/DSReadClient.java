@@ -6,6 +6,7 @@ import karol.wlazlo.model.PriceItem.PriceItemResponse;
 import karol.wlazlo.model.ProductImages.ProductImagesResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
+import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.Security.AppUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -42,4 +43,7 @@ public interface DSReadClient {
 
     @PostMapping("/save")
     void saveUser(@RequestBody AppUser user);
+
+    @PostMapping("/user/get/email")
+    AppUser getUserByEmail(@RequestBody ResetPasswordForm form);
 }
