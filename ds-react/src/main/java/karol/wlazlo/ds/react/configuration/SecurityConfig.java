@@ -26,7 +26,8 @@ import javax.crypto.SecretKey;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] acceptedPaths = new String[]{"/api/react/products", "/api/react/product/prices", "/api/react/product/*/details",
-            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate"};
+            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate",
+            "/api/react/user/reset-password"};
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;

@@ -6,6 +6,7 @@ import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
+import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,13 @@ public interface DSUpdateClient {
     ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm);
 
     @PostMapping("/user/reset-password/auth")
-    ResponseEntity<Response> resetPasswordAuthenticate(@RequestBody ResetPasswordForm resetPasswordForm);
+    ResponseEntity<Response> resetPasswordAuthenticate(@RequestBody ResetPasswordFormAuth resetPasswordFormAuth);
 
     @GetMapping("/user/activate")
     ResponseEntity<Response> activateUser(@RequestParam("id") String uuid, @RequestParam("usr") Long userId);
+
+    @PostMapping("/user/reset-password")
+    ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm,
+                                           @RequestParam("id") String uuid,
+                                           @RequestParam("usr") Long userId);
 }

@@ -51,7 +51,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendResetEmail(AppUser user) {
+    public void sendResetEmail(AppUser user, String tempPassword) {
         Session session = setUp();
 
         MimeMessage message = new MimeMessage(session);
@@ -63,7 +63,7 @@ public class EmailService {
             message.addRecipient(Message.RecipientType.TO, toAddress[0]);
 
             message.setSubject("Resetowanei hasła");
-            message.setText("Kliknij w poniższy link aby zresetować hasło: \n" + generateResetPasswordLink(user.getResetPasswordUUID().toString(), String.valueOf(user.getId())));
+            message.setText("Hasło tymczasowe: " + tempPassword + "\n" + "Kliknij w poniższy link aby zresetować hasło: \n" + generateResetPasswordLink(user.getResetPasswordUUID().toString(), String.valueOf(user.getId())));
 
             Transport transport = session.getTransport("smtp");
 

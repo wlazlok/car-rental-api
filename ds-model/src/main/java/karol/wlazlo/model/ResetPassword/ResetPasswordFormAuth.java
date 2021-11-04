@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResetPasswordForm {
+public class ResetPasswordFormAuth {
 
     private String email;
-    private String tempPassword;
-    private String newPassword;
 }

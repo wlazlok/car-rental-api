@@ -1,7 +1,7 @@
 package karol.wlazlo.ds.react.configuration.security.jwt;
 
 import karol.wlazlo.commons.clients.DSReadClient;
-import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
+import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class AppUserService implements UserDetailsService {
         AppUser user;
 
         try {
-            user = dsReadClient.getUserByEmail(ResetPasswordForm.builder().email(email).build());
+            user = dsReadClient.getUserByEmail(ResetPasswordFormAuth.builder().email(email).build());
         } catch (Exception ex) {
             ex.printStackTrace();
             //todo obsluga wyjątków logi

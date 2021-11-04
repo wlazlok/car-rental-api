@@ -4,8 +4,10 @@ import karol.wlazlo.commons.exceptions.CarRentalException;
 import karol.wlazlo.commons.repositories.AppUserRepository;
 import karol.wlazlo.model.ErrorMessage.ErrorMessage;
 import karol.wlazlo.model.Register.RegisterForm;
+import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.Response.Response;
 import karol.wlazlo.model.Security.AppUser;
+import karol.wlazlo.model.Security.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,15 +101,49 @@ public class UserService {
         AppUser user = foundUser.get();
 
         try {
+            String tempPassword = generateRandomPassword();
             user.setResetPasswordUUID(UUID.randomUUID());
+            user.setPassword(passwordEncoder.encode(tempPassword));
             user = appUserRepository.save(user);
 
-            emailService.sendResetEmail(user);
+            emailService.sendResetEmail(user, tempPassword);
             response.setSuccessMessage("Mail resetujący został wysłany");
 
             return response;
         } catch (Exception ex) {
             throw new CarRentalException("msg.err.reset.password.authenticate");
+        }
+    }
+
+    public Response resetPassword(ResetPasswordForm resetPasswordForm, String uuid, Long userId) {
+        //todo: logi
+        Response response = new Response();
+        AppUser user = appUserRepository.getById(userId);
+
+        if (user == null) {
+            throw new CarRentalException("msg.err.user.not.found");
+        }
+        if (!user.getEmail().equals(resetPasswordForm.getEmail())) {
+            throw new CarRentalException("msg.err.incorrect.user.email");
+        }
+        if (user.getResetPasswordUUID() == null) {
+            throw new CarRentalException("msg.err.reset.password.not.requested");
+        }
+        if (!uuid.equals(user.getResetPasswordUUID().toString())) {
+            throw new CarRentalException("msg.err.incorrect.uuid");
+        }
+        if (!passwordEncoder.matches(resetPasswordForm.getTempPassword(), user.getPassword())) {
+            throw new CarRentalException("msg.err.incorrect.temp.password");
+        }
+
+        try {
+            user.setResetPasswordUUID(null);
+            user.setPassword(passwordEncoder.encode(resetPasswordForm.getNewPassword()));
+            appUserRepository.save(user);
+            response.setSuccessMessage("Hasło zmienione pomyślnie!");
+            return response;
+        } catch (Exception ex) {
+            throw new CarRentalException("msg.err.reset.password.error");
         }
     }
 
@@ -125,11 +161,12 @@ public class UserService {
                 .postalCode(form.getPostalCode())
                 .city(form.getCity())
                 .activateAccountUUID(UUID.randomUUID())
+                .role(Role.USER)
                 .build();
     }
 
     private String generateRandomPassword() {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#?!@$%^&*-";
         return RandomStringUtils.random(15, characters);
     }
 }

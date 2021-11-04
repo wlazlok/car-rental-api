@@ -1,7 +1,7 @@
 package karol.wlazlo.ds.read.controllers;
 
 import karol.wlazlo.commons.repositories.AppUserRepository;
-import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
+import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Security.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class FetchUserController {
     }
 
     @PostMapping("/get/email")
-    public AppUser getUserByEmail(@RequestBody ResetPasswordForm form) {
+    public AppUser getUserByEmail(@RequestBody ResetPasswordFormAuth form) {
         Optional<AppUser> user = appUserRepository.findAppUserByEmail(form.getEmail());
 
         return user.isEmpty() ? null : user.get();
