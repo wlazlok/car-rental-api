@@ -9,10 +9,7 @@ import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.Response.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(value = "DSUpdateClient", url = "localhost:8911/ds/update")
 public interface DSUpdateClient {
@@ -29,6 +26,9 @@ public interface DSUpdateClient {
     @PostMapping("/user/register")
     ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm);
 
-    @PostMapping("/user/reset-password")
-    ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm);
+    @PostMapping("/user/reset-password/auth")
+    ResponseEntity<Response> resetPasswordAuthenticate(@RequestBody ResetPasswordForm resetPasswordForm);
+
+    @GetMapping("/user/activate")
+    ResponseEntity<Response> activateUser(@RequestParam("id") String uuid, @RequestParam("usr") Long userId);
 }
