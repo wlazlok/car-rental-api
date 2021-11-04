@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {"karol.wlazlo.commons", "karol.wlazlo.ds.update.controlers"})
+@SpringBootApplication(scanBasePackages = {"karol.wlazlo.commons", "karol.wlazlo.ds.update"})
 @EntityScan(basePackages = {"karol.wlazlo.model"})
 @EnableJpaRepositories(basePackages = "karol.wlazlo.commons.repositories")
 public class DsUpdateApplication {
