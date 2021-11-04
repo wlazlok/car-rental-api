@@ -1,5 +1,7 @@
 package karol.wlazlo.model.Security;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -11,6 +13,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Table(name = "USERS")
 @NoArgsConstructor
@@ -23,9 +26,6 @@ public class AppUser implements UserDetails {
 
     //todo: uporządkować, walidacje itp.
 
-    @Transient
-    private final String ROLE_PREFIX = "ROLE_";
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -36,6 +36,20 @@ public class AppUser implements UserDetails {
 
     private String email;
 
+    private String name;
+
+    private String surname;
+
+    private String street;
+
+    private String houseNumber;
+
+    private String appNumber;
+
+    private String postalCode;
+
+    private String city;
+
     private boolean isAccountNonExpired;
 
     private boolean isAccountNonLocked;
@@ -43,6 +57,10 @@ public class AppUser implements UserDetails {
     private boolean isCredentialsNonExpired;
 
     private boolean isEnabled;
+
+    private UUID activateAccountUUID;
+
+    private UUID resetPasswordUUID;
 
 //    private UUID activateAccountUUID;
 //
@@ -56,7 +74,7 @@ public class AppUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + this.role));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role));
 
         return authorities;
     }

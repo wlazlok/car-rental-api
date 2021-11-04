@@ -1,6 +1,8 @@
 package karol.wlazlo.ds.update.controlers;
 
 import karol.wlazlo.commons.repositories.AppUserRepository;
+import karol.wlazlo.commons.utils.HandleErrorMessage;
+import karol.wlazlo.ds.update.services.UserService;
 import karol.wlazlo.model.ErrorMessage.ErrorMessage;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
@@ -10,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static karol.wlazlo.commons.utils.HandleErrorMessage.mapErrorMessage;
 
 @Slf4j
 @RequestMapping("/ds/update/user")
@@ -26,46 +28,43 @@ public class UserController {
     @Autowired
     private AppUserRepository appUserRepository;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/register")
     public ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm) {
         //todo: obsługa błędów, przeniesnie logiki do serwisów,errory po errorCode
         //todo wyslanie mejla z linkiem, zablokowanie konta do czasu aktywowania!
 
-        Response response = new Response();
-
-        Optional<AppUser> user = appUserRepository.findAppUserByEmail(registerForm.getEmail());
-
-        if (user.isPresent()) {
-            response.setErrors(List.of(ErrorMessage.builder()
-                    .message("Użytkownik o podanym adresie email istnieje")
-                    .build()));
-
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-
-        response.setSuccessMessage("Link aktywujący został wysłany na adres e-mail");
+        Response response = userService.registerUser(registerForm);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm) {
-        //todo: obsługa błędów, przeniesnie logiki do serwisów,errory po errorCode
-        //todo wyslanie mejla z linkiem, zablokowanie konta do czasu aktywowania!
-
+    @GetMapping("/activate")
+    public ResponseEntity<Response> activateUser(@RequestParam("id") String uuid, @RequestParam("usr") Long userId) {
         Response response = new Response();
-        log.info("reset password by email: {}", resetPasswordForm.getEmail());
-        Optional<AppUser> user = appUserRepository.findAppUserByEmail(resetPasswordForm.getEmail());
 
-        if (user.isEmpty()) {
-            response.setErrors(List.of(ErrorMessage.builder()
-                    .message("Podano błędny adres email")
-                    .build()));
-
+        try {
+             response = userService.activateUser(uuid, userId);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
-        response.setSuccessMessage("Link resetujący hasło został wysłany");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/reset-password/auth")
+    public ResponseEntity<Response> resetPasswordAuthenticate(@RequestBody ResetPasswordForm resetPasswordForm) {
+        Response response = new Response();
+
+        try {
+            response = userService.resetPasswordAuthenticate(resetPasswordForm.getEmail());
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

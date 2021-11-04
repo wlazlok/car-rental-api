@@ -4,8 +4,8 @@ import karol.wlazlo.ds.react.configuration.security.jwt.AppUserService;
 import karol.wlazlo.ds.react.configuration.security.jwt.JwtConfig;
 import karol.wlazlo.ds.react.configuration.security.jwt.JwtTokenVerifier;
 import karol.wlazlo.ds.react.configuration.security.jwt.JwtUsernameAndPasswordAuthFilter;
-import karol.wlazlo.model.Security.Role;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,10 +22,11 @@ import javax.crypto.SecretKey;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@ComponentScan({"karol.wlazlo.commons"})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] acceptedPaths = new String[]{"/api/react/products", "/api/react/product/prices", "/api/react/product/*/details",
-            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register"};
+            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate"};
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;
@@ -54,10 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("/*", "index", "/css/*", "/js/*").permitAll()
 //                .antMatchers("/api/react/products").hasAnyRole(Role.ADMIN.name())
-                .antMatchers(acceptedPaths).permitAll()
+//                .antMatchers(acceptedPaths).permitAll()
+//                .antMatchers("/api/react/user/info").authenticated()
                 .anyRequest()
-                .authenticated();
-//                .permitAll();
+//                .authenticated();
+                .permitAll();
     }
 
     @Override
