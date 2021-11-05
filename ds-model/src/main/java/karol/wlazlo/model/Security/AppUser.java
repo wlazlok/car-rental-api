@@ -3,7 +3,11 @@ package karol.wlazlo.model.Security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.*;
+import karol.wlazlo.model.CommentItem.CommentItem;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,6 +69,10 @@ public class AppUser implements UserDetails {
 //    private UUID activateAccountUUID;
 //
 //    private UUID resetPasswordUUID;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<CommentItem> comments;
 
     @Enumerated(EnumType.STRING)
     private Role role;

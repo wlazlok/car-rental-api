@@ -2,9 +2,15 @@ package karol.wlazlo.ds.update.services;
 
 import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -22,58 +28,95 @@ import java.util.Properties;
 public class EmailService {
 
     private final String host = "smtp.mailtrap.io";
-    private final String from = "";
-    private final String password = "";
+    private final String from = "c3522abe840c72";
+    private final String password = "5793fa0149eaa4";
+
+    private final String EMAIL_FROM = "test@test.com";
+    private final String TEMPLATE_NAME_ACTIVATE = "registration";
+    private final String TEMPLATE_NAME_RESET = "resetPassword";
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Async
     public void sendActivateEmail(AppUser user) {
-        Session session = setUp();
-
-        MimeMessage message = new MimeMessage(session);
-
         try {
-            message.setFrom(new InternetAddress(from));
-            InternetAddress[] toAddress = new InternetAddress[1];
-            toAddress[0] = new InternetAddress(user.getEmail());
-            message.addRecipient(Message.RecipientType.TO, toAddress[0]);
+            MimeMessage message = generateActivateEmail(user);
 
-            message.setSubject("Aktywacja konta");
-            message.setText("Kliknij w poniższy link aby aktywować konto: \n" + generateActivateLink(user.getActivateAccountUUID().toString(), String.valueOf(user.getId())));
+            mailSender.send(message);
 
-            Transport transport = session.getTransport("smtp");
-
-            transport.connect(host, from, password);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
-        } catch (MessagingException | MalformedURLException ae) {
-            ae.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
     @Async
     public void sendResetEmail(AppUser user, String tempPassword) {
-        Session session = setUp();
-
-        MimeMessage message = new MimeMessage(session);
-
         try {
-            message.setFrom(new InternetAddress(from));
-            InternetAddress[] toAddress = new InternetAddress[1];
-            toAddress[0] = new InternetAddress(user.getEmail());
-            message.addRecipient(Message.RecipientType.TO, toAddress[0]);
+           MimeMessage message = generateResetPasswordEmail(user, tempPassword);
 
-            message.setSubject("Resetowanei hasła");
-            message.setText("Hasło tymczasowe: " + tempPassword + "\n" + "Kliknij w poniższy link aby zresetować hasło: \n" + generateResetPasswordLink(user.getResetPasswordUUID().toString(), String.valueOf(user.getId())));
-
-            Transport transport = session.getTransport("smtp");
-
-            transport.connect(host, from, password);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
-        } catch (MessagingException | MalformedURLException ae) {
-            ae.printStackTrace();
+           mailSender.send(message);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
+
+    private MimeMessage generateActivateEmail(AppUser user) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        try {
+            URL activateLink = generateActivateLink(user.getActivateAccountUUID().toString(), String.valueOf(user.getId()));
+            mailSender.createMimeMessage();
+            MimeMessageHelper email;
+            email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            email.setTo(user.getEmail());
+            email.setSubject("Aktywacja konta");
+            email.setFrom(EMAIL_FROM);
+
+            Context ctx = new Context(LocaleContextHolder.getLocale());
+            ctx.setVariable("url", activateLink);
+
+            String htmlContent = templateEngine.process(TEMPLATE_NAME_ACTIVATE, ctx);
+
+            email.setText(htmlContent, true);
+        } catch (Exception ex) {
+            log.info("Error during creating email content");
+        }
+
+        return mimeMessage;
+    }
+
+    private MimeMessage generateResetPasswordEmail(AppUser user, String tempPassword) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        try {
+            URL resetLink = generateResetPasswordLink(user.getResetPasswordUUID().toString(), String.valueOf(user.getId()));
+            mailSender.createMimeMessage();
+            MimeMessageHelper email;
+            email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            email.setTo(user.getEmail());
+            email.setSubject("Resetowanie hasła");
+            email.setFrom(EMAIL_FROM);
+
+            Context ctx = new Context(LocaleContextHolder.getLocale());
+            ctx.setVariable("url", resetLink);
+            ctx.setVariable("tempPassword", tempPassword);
+
+            String htmlContent = templateEngine.process(TEMPLATE_NAME_RESET, ctx);
+
+            email.setText(htmlContent, true);
+        } catch (Exception ex) {
+            log.info("Error during creating email content");
+        }
+
+        return mimeMessage;
+    }
+
 
     public URL generateActivateLink(String uuid, String userId) throws MalformedURLException {
         return new URL("http://localhost:3000/activate/" + uuid + "/" + userId);

@@ -34,7 +34,6 @@ public class FetchProductItemController {
 
     @GetMapping("/fetch/product/{productId}/details")
     public ResponseEntity<ProductItemResponse> fetchProductDetails(@PathVariable Long productId) {
-
         ProductItemResponse productItemResponse = ProductItemResponse.builder()
                 .product(productItemRepository.getById(productId))
                 .build();

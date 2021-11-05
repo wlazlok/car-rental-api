@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/*", "index", "/css/*", "/js/*").permitAll()
 //                .antMatchers("/api/react/products").hasAnyRole(Role.ADMIN.name())
 //                .antMatchers(acceptedPaths).permitAll()
-//                .antMatchers("/api/react/user/info").authenticated()
+                .antMatchers("/api/react/comment/add").authenticated()
                 .anyRequest()
 //                .authenticated();
                 .permitAll();

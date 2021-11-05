@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+        body {
+            font-family: calibri, 'DejaVu Sans', Arial, Helvetica, sans-serif;
+            background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
+        }
+
+        .btn {
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: sans-serif;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 30px;
+            min-width: 100px;
+            border: 0px;
+            -webkit-transition: background-color 100ms linear;
+            -ms-transition: background-color 100ms linear;
+            transition: background-color 100ms linear;
+            border-radius: 15px;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+            color: #ffffff;
+        }
+    </style>
+
+</head>
+<body>
+<div style="margin-left: 45%;  margin-top: 20%">
+    <a th:href="${url}">
+        <button class="btn btn-success">AKTYWUJ KONTO!</button>
+    </a>
+</div>
+</body>
+</html>

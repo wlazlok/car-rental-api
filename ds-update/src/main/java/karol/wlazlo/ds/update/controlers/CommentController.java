@@ -1,50 +1,44 @@
 package karol.wlazlo.ds.update.controlers;
 
-import karol.wlazlo.commons.repositories.CommentItemRepository;
-import karol.wlazlo.commons.repositories.ProductItemRepository;
-import karol.wlazlo.model.CommentItem.CommentItem;
+import karol.wlazlo.ds.update.services.CommentService;
 import karol.wlazlo.model.CommentItem.CommentRequest;
-import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
+import java.util.List;
 
+import static karol.wlazlo.commons.utils.HandleErrorMessage.mapErrorMessage;
+
+@Slf4j
 @RestController
 @RequestMapping("/ds/update")
 public class CommentController {
 
-    //todo obsługa błędów, przeniesc do serwisów
-
     @Autowired
-    private CommentItemRepository commentItemRepository;
-
-    @Autowired
-    private ProductItemRepository productItemRepository;
+    private CommentService commentService;
 
     @PostMapping("/comment/add")
     public ResponseEntity<ProductItemResponse> addCommentToProduct(@RequestBody CommentRequest commentRequest) {
 
-        ProductItem productItem = productItemRepository.getById(commentRequest.getProductId());
+        ProductItemResponse response = new ProductItemResponse();
 
-        CommentItem commentItem = new CommentItem();
+        try {
+            response = commentService.addComment(commentRequest);
 
-        commentItem.setProductId(productItem);
-        commentItem.setMessage(commentRequest.getMessage());
-        commentItem.setDate(new Date());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            log.warn(ex.getMessage());
+            response.setErrors(List.of(mapErrorMessage(ex)));
 
-        commentItemRepository.save(commentItem);
-
-        ProductItemResponse productItemResponse = ProductItemResponse.builder()
-                .product(productItem)
-                .build();
-
-        return ResponseEntity.ok(productItemResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
     }
 
 }
