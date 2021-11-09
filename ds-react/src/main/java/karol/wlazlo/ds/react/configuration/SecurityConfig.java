@@ -29,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate",
             "/api/react/user/reset-password"};
 
+    private final String[] authPaths = new String[]{"/api/react/user/update", "/api/react/user/info", "/api/react/comment/add", "/api/react/user/change-password"};
+
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;
     private final SecretKey secretKey;
@@ -57,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/*", "index", "/css/*", "/js/*").permitAll()
 //                .antMatchers("/api/react/products").hasAnyRole(Role.ADMIN.name())
 //                .antMatchers(acceptedPaths).permitAll()
-                .antMatchers("/api/react/comment/add").authenticated()
+                .antMatchers(authPaths).authenticated()
                 .anyRequest()
 //                .authenticated();
                 .permitAll();

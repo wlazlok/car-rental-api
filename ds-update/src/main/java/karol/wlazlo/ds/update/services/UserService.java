@@ -2,6 +2,7 @@ package karol.wlazlo.ds.update.services;
 
 import karol.wlazlo.commons.exceptions.CarRentalException;
 import karol.wlazlo.commons.repositories.AppUserRepository;
+import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.ErrorMessage.ErrorMessage;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
@@ -47,7 +48,7 @@ public class UserService {
             return response;
         }
 
-        AppUser savedUser = appUserRepository.save(mapRegisterFormToAppUser(form));
+        AppUser savedUser = appUserRepository.save(mapRegisterFormToAppUser(form, null));
 
         emailService.sendActivateEmail(savedUser);
 
@@ -147,12 +148,78 @@ public class UserService {
         }
     }
 
-    private AppUser mapRegisterFormToAppUser(RegisterForm form) {
+    public AppUser updateUser(RegisterForm form) {
+
+        try {
+            AppUser user = appUserRepository.getAppUserByUsername(form.getEmail());
+
+            user = mapRegisterFormToAppUser(form, user);
+
+            return appUserRepository.save(user);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.warn("msg.err.user.service.update.user {}", ex.getLocalizedMessage());
+            throw new CarRentalException("msg.err.update.user");
+        }
+    }
+
+    public Response changePassword(ChangePasswordRequest request, String username) {
+        Response response = new Response();
+
+        if (username == null) {
+            throw new CarRentalException("msg.err.user.context.error");
+        }
+
+        AppUser user = appUserRepository.getAppUserByUsername(username);
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new CarRentalException("msg.err.incorrect.old.password");
+        }
+        if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+            throw new CarRentalException("msg.password.not.equal");
+        }
+        //todo: obsluga bledow na ui, nie zminia hasla poprawnie
+        try {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            appUserRepository.save(user);
+            response.setSuccessMessage("Hasło zmienione pomyślnie");
+
+            return response;
+        } catch (Exception ex)  {
+            ex.printStackTrace();
+            log.warn("user.service.change.password.err {}", ex.getLocalizedMessage());
+            throw new CarRentalException("msg.err.change.password.err");
+        }
+    }
+
+    public AppUser editUserControl(String type, Long userId) {
+        AppUser user = appUserRepository.getById(userId);
+
+        switch (type) {
+            case "enabled" : {
+                user.setEnabled(!user.isEnabled());
+                return appUserRepository.save(user);
+            }
+            case "credentialsNonExpired" : {
+                user.setCredentialsNonExpired(!user.isCredentialsNonExpired());
+                return appUserRepository.save(user);
+            }
+            case "accountNonExpired" : {
+                user.setAccountNonExpired(!user.isAccountNonExpired());
+                return appUserRepository.save(user);
+            }
+        }
+
+        return null;
+    }
+
+    private AppUser mapRegisterFormToAppUser(RegisterForm form, AppUser isNew) {
         //username jako email
         return AppUser.builder()
-                .email(form.getEmail())
-                .username(form.getEmail())
-                .password(passwordEncoder.encode(form.getPassword()))
+                .id(isNew == null ? null : isNew.getId())
+                .email(isNew == null ? form.getEmail() : isNew.getEmail())
+                .username(isNew == null ? form.getEmail() : isNew.getUsername())
+                .password(isNew == null ? passwordEncoder.encode(form.getPassword()) : isNew.getPassword())
                 .name(form.getName())
                 .surname(form.getSurname())
                 .street(form.getStreet())
@@ -160,8 +227,13 @@ public class UserService {
                 .appNumber(form.getAppNumber())
                 .postalCode(form.getPostalCode())
                 .city(form.getCity())
-                .activateAccountUUID(UUID.randomUUID())
-                .role(Role.USER)
+                .activateAccountUUID(isNew == null ? UUID.randomUUID(): null)
+                .role(isNew == null ? Role.USER : isNew.getRole())
+                .isAccountNonExpired(isNew != null && isNew.isAccountNonExpired())
+                .isAccountNonLocked(isNew != null && isNew.isAccountNonLocked())
+                .isCredentialsNonExpired(isNew != null && isNew.isCredentialsNonExpired())
+                .isEnabled(isNew != null && isNew.isEnabled())
+                .comments(isNew == null ? null : isNew.getComments())
                 .build();
     }
 

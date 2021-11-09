@@ -1,5 +1,6 @@
 package karol.wlazlo.model.ProductItem;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import karol.wlazlo.model.CloudinaryImageItem.CloudinaryImageItem;
 import karol.wlazlo.model.CommentItem.CommentItem;
 import karol.wlazlo.model.DetailProductItem.DetailProductItem;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ProductItem {
 
     @Id

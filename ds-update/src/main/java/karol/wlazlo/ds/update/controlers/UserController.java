@@ -2,10 +2,13 @@ package karol.wlazlo.ds.update.controlers;
 
 import karol.wlazlo.commons.repositories.AppUserRepository;
 import karol.wlazlo.ds.update.services.UserService;
+import karol.wlazlo.model.AppUserResponse.AppUserResponse;
+import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Response.Response;
+import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +45,7 @@ public class UserController {
         Response response = new Response();
 
         try {
-             response = userService.activateUser(uuid, userId);
+            response = userService.activateUser(uuid, userId);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -80,5 +83,38 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<AppUserResponse> updateUser(@RequestBody RegisterForm form) {
+        AppUserResponse response = new AppUserResponse();
+
+        try {
+            response.setUser(userService.updateUser(form));
+            response.setSuccessMessage("Pomyślnie zaktualizowano dane");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request, @RequestParam("username") String username) {
+        Response response = new Response();
+
+        try {
+            response = userService.changePassword(request, username);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+    }
+
+    @PostMapping("/control")
+    public AppUser editControl(@RequestParam("type") String type, @RequestParam("uId") Long userId) {
+        return userService.editUserControl(type, userId);
     }
 }

@@ -1,5 +1,7 @@
 package karol.wlazlo.commons.clients;
 
+import karol.wlazlo.model.AppUserResponse.AppUserResponse;
+import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.CommentItem.CommentRequest;
 import karol.wlazlo.model.ProductItem.DeleteProductItemResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
@@ -38,4 +40,16 @@ public interface DSUpdateClient {
     ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm,
                                            @RequestParam("id") String uuid,
                                            @RequestParam("usr") Long userId);
+
+    @DeleteMapping("/image/delete")
+    ResponseEntity<ProductItemResponse> deleteImage(@RequestParam("id") String id, @RequestParam("pId") Long productId);
+
+    @PostMapping("/user/update")
+    ResponseEntity<AppUserResponse> updateUser(@RequestBody RegisterForm form);
+
+    @PostMapping("/user/change-password")
+    ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request, @RequestParam("username") String username);
+
+    @PostMapping("/user/control")
+    AppUser editControl(@RequestParam("type") String type, @RequestParam("uId") Long userId);
 }

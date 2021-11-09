@@ -2,6 +2,8 @@ package karol.wlazlo.ds.react.controller;
 
 import karol.wlazlo.commons.clients.DSUpdateClient;
 import karol.wlazlo.ds.react.services.UserContextService;
+import karol.wlazlo.model.AppUserResponse.AppUserResponse;
+import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
@@ -63,6 +65,28 @@ public class UserController {
                                                   @RequestParam("id") String uuid,
                                                   @RequestParam("usr") Long userId) {
         Response response = dsUpdateClient.resetPassword(resetPasswordForm, uuid, userId).getBody();
+
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<AppUserResponse> updateUser(@RequestBody RegisterForm form) {
+        AppUserResponse response = dsUpdateClient.updateUser(form).getBody();
+
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request) {
+        Response response = dsUpdateClient.changePassword(request, userContextService.getUserForContext().getUsername()).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

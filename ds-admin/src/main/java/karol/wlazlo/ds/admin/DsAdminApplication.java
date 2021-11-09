@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @ConfigurationPropertiesScan
 @EntityScan(basePackages = {"karol.wlazlo.model"})
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class}, scanBasePackages = {"karol.wlazlo.ds.admin", "karol.wlazlo.commons.services"})
 @EnableFeignClients(basePackages = "karol.wlazlo.commons.clients")
 public class DsAdminApplication {
 

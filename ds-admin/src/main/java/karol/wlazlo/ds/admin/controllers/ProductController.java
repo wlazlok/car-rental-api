@@ -8,6 +8,7 @@ import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/products")
 public class ProductController {
-
-    //todo obsługa błędów
 
     @Autowired
     private DSReadClient dsReadClient;
@@ -38,12 +37,23 @@ public class ProductController {
     @PostMapping("/update")
     public ResponseEntity<ProductItemResponse> updateProduct(@RequestBody ProductItem productItem) {
         log.info("admin.ProductController update/add product with ID: {}", productItem.getId() != null ? productItem.getId() : "new");
-        return dsUpdateClient.updateProduct(productItem);
+        ProductItemResponse response = dsUpdateClient.updateProduct(productItem).getBody();
+
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<DeleteProductItemResponse> deleteProduct(@PathVariable("productId") Long productId) {
         log.info("admin.ProductController delete product by ID: {}", productId);
-        return dsUpdateClient.deleteProductById(productId);
+        DeleteProductItemResponse response = dsUpdateClient.deleteProductById(productId).getBody();
+
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
