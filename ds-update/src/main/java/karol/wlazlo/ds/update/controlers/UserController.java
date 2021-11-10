@@ -32,12 +32,17 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm) {
-        //todo: obsługa błędów, przeniesnie logiki do serwisów,errory po errorCode
-        //todo wyslanie mejla z linkiem, zablokowanie konta do czasu aktywowania!
+        Response response = new Response();
 
-        Response response = userService.registerUser(registerForm);
+        try {
+            response = userService.registerUser(registerForm);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @GetMapping("/activate")
@@ -48,7 +53,7 @@ public class UserController {
             response = userService.activateUser(uuid, userId);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -62,7 +67,7 @@ public class UserController {
             response = userService.resetPasswordAuthenticate(resetPasswordFormAuth.getEmail());
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -72,14 +77,13 @@ public class UserController {
     public ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm,
                                                   @RequestParam("id") String uuid,
                                                   @RequestParam("usr") Long userId) {
-        //todo: ExceptionHandler dla status !OK
         Response response = new Response();
 
         try {
             response = userService.resetPassword(resetPasswordForm, uuid, userId);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -95,7 +99,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -109,7 +113,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/admin/change-password")
+    public ResponseEntity<Response> changePasswordAdmin(@RequestBody ChangePasswordRequest request, @RequestParam("uId") Long userId) {
+        Response response = new Response();
+
+        try {
+            response = userService.changePassword(request,  appUserRepository.getById(userId).getUsername());
+
             return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 

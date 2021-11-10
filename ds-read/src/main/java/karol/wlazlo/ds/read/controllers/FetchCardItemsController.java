@@ -1,46 +1,37 @@
 package karol.wlazlo.ds.read.controllers;
 
-import karol.wlazlo.commons.repositories.ProductItemRepository;
-import karol.wlazlo.model.CardItem.CardItem;
+import karol.wlazlo.ds.read.services.ProductService;
 import karol.wlazlo.model.CardItem.CardItemResponse;
-import karol.wlazlo.model.ProductItem.ProductItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static karol.wlazlo.commons.utils.HandleErrorMessage.mapErrorMessage;
 
 @RestController
 @RequestMapping("/ds/read")
 public class FetchCardItemsController {
 
     @Autowired
-    private ProductItemRepository productItemRepository;
+    private ProductService productService;
 
     @GetMapping("/fetch/cards")
     public ResponseEntity<CardItemResponse> getCards() {
 
-        CardItemResponse cardItemResponse = new CardItemResponse();
-        List<ProductItem> products = productItemRepository.findAll();
+        CardItemResponse response = new CardItemResponse();
 
-        if (products.size() <= 0) {
-            return ResponseEntity.ok(cardItemResponse);
+        try {
+            response = productService.getProducts();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-
-        cardItemResponse.setCardItems(
-                products
-                        .stream()
-                        .map(item -> CardItem.builder()
-                                .productId(item.getId())
-                                .productName(item.getProductName())
-                                .cloudinaryMainImageId(!item.getCloudinaryIds().isEmpty() ? item.getCloudinaryIds().get(0).getCloudinaryId() : null)
-                                .build())
-                        .collect(Collectors.toList()));
-
-
-        return ResponseEntity.ok(cardItemResponse);
     }
 }

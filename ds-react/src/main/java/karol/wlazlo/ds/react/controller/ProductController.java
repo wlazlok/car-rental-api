@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/react")
 public class ProductController {
 
-    //todo obsługa błędów
-
     @Autowired
     private DSReadClient dsReadClient;
 

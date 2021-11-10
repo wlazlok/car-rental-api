@@ -37,7 +37,7 @@ public class CommentController {
             log.warn(ex.getMessage());
             response.setErrors(List.of(mapErrorMessage(ex)));
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 

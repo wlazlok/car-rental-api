@@ -1,6 +1,7 @@
 package karol.wlazlo.ds.react.controller;
 
 import karol.wlazlo.commons.clients.DSUpdateClient;
+import karol.wlazlo.commons.exceptions.UserContextException;
 import karol.wlazlo.ds.react.services.UserContextService;
 import karol.wlazlo.model.CommentItem.CommentRequest;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
@@ -25,8 +26,7 @@ public class CommentController {
     private UserContextService userContextService;
 
     @PostMapping("/add")
-    public ResponseEntity<ProductItemResponse> addComment(@RequestBody CommentRequest commentRequest) {
-        //todo obsługa jak nie znajdzie usera dorobic exceptionHandler
+    public ResponseEntity<ProductItemResponse> addComment(@RequestBody CommentRequest commentRequest) throws UserContextException {
         commentRequest.setUser(userContextService.getUserForContext());
 
         ProductItemResponse response = dsUpdateClient.addCommentToProduct(commentRequest).getBody();

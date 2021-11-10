@@ -29,8 +29,6 @@ public class ImagesController {
     public ResponseEntity<ProductItemResponse> uploadImage(@PathVariable("productId") Long productId,
                                                            HttpServletRequest servletRequest) throws ServletException, IOException {
 
-        //todo obsługa błędów
-
         ProductItemResponse response = uploadImageService.upload(servletRequest, productId);
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {

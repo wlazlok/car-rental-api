@@ -52,4 +52,7 @@ public interface DSUpdateClient {
 
     @PostMapping("/user/control")
     AppUser editControl(@RequestParam("type") String type, @RequestParam("uId") Long userId);
+
+    @PostMapping("/user/admin/change-password")
+    ResponseEntity<Response> changePasswordAdmin(@RequestBody ChangePasswordRequest request, @RequestParam("uId") Long userId);
 }

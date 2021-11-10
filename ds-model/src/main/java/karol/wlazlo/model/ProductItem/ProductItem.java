@@ -23,15 +23,15 @@ public class ProductItem {
 
     private String productName;
 
-    @OneToMany(mappedBy = "productId", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CloudinaryImageItem> cloudinaryIds;
 
     private Integer dayPrice;
 
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_details_id")
     private DetailProductItem productDetails;
 
-    @OneToMany(mappedBy = "productId", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CommentItem> comments;
 }

@@ -1,6 +1,7 @@
 package karol.wlazlo.commons.clients;
 
 import karol.wlazlo.model.Admin.Product.ProductsListResponse;
+import karol.wlazlo.model.AdminUserResponse.AdminUserResponse;
 import karol.wlazlo.model.CardItem.CardItemResponse;
 import karol.wlazlo.model.PriceItem.PriceItemResponse;
 import karol.wlazlo.model.ProductImages.ProductImagesResponse;
@@ -10,10 +11,7 @@ import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Security.AppUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,4 +44,10 @@ public interface DSReadClient {
 
     @PostMapping("/user/get/email")
     AppUser getUserByEmail(@RequestBody ResetPasswordFormAuth form);
+
+    @GetMapping("/user/all")
+    ResponseEntity<AdminUserResponse> getUsers();
+
+    @GetMapping("/user")
+    ResponseEntity<AppUser> getUserById(@RequestParam("uId") Long userId);
 }

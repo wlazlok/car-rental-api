@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/react")
 public class ContactFormController {
 
+    //todo: oblsuga formularza
+
     @PostMapping("/contact-form")
     public ResponseEntity<ContactFormResponse> receiveContactForm(@RequestBody ContactForm contactForm) {
         System.out.println(contactForm);

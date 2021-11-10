@@ -1,6 +1,7 @@
 package karol.wlazlo.ds.react.controller;
 
 import karol.wlazlo.commons.clients.DSUpdateClient;
+import karol.wlazlo.commons.exceptions.UserContextException;
 import karol.wlazlo.ds.react.services.UserContextService;
 import karol.wlazlo.model.AppUserResponse.AppUserResponse;
 import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/react/user")
 public class UserController {
-    //todo oblsuga bledow, logi przenisnie logiki do serwisów
 
     @Autowired
     private DSUpdateClient dsUpdateClient;
@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request) throws UserContextException {
         Response response = dsUpdateClient.changePassword(request, userContextService.getUserForContext().getUsername()).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -96,7 +96,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<AppUser> getUserInfo() {
+    public ResponseEntity<AppUser> getUserInfo() throws UserContextException {
         return ResponseEntity.status(HttpStatus.OK).body(userContextService.getUserForContext());
     }
 }

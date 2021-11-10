@@ -1,9 +1,10 @@
-package karol.wlazlo.ds.react.configuration;
+package karol.wlazlo.ds.admin.configuration;
 
-import karol.wlazlo.ds.react.configuration.security.jwt.AppUserService;
-import karol.wlazlo.ds.react.configuration.security.jwt.JwtConfig;
-import karol.wlazlo.ds.react.configuration.security.jwt.JwtTokenVerifier;
-import karol.wlazlo.ds.react.configuration.security.jwt.JwtUsernameAndPasswordAuthFilter;
+import karol.wlazlo.ds.admin.configuration.security.jwt.AppUserService;
+import karol.wlazlo.ds.admin.configuration.security.jwt.JwtConfig;
+import karol.wlazlo.ds.admin.configuration.security.jwt.JwtTokenVerifier;
+import karol.wlazlo.ds.admin.configuration.security.jwt.JwtUsernameAndPasswordAuthFilter;
+import karol.wlazlo.model.Security.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,6 @@ import javax.crypto.SecretKey;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @ComponentScan({"karol.wlazlo.commons"})
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private final String[] acceptedPaths = new String[]{"/api/react/products", "/api/react/product/prices", "/api/react/product/*/details",
-            "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate",
-            "/api/react/user/reset-password"};
-
-    private final String[] authPaths = new String[]{"/api/react/user/update", "/api/react/user/info", "/api/react/comment/add", "/api/react/user/change-password"};
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;
@@ -56,10 +51,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(getJwtUsernameAndPasswordAuthFilter())
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers(acceptedPaths).permitAll()
-                .antMatchers(authPaths).authenticated()
+//                .antMatchers(acceptedPaths).permitAll()
+                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
+//                .antMatchers("/admin/user/**").permitAll()
                 .anyRequest()
                 .authenticated();
+//                .permitAll();
     }
 
     @Override
@@ -70,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtUsernameAndPasswordAuthFilter getJwtUsernameAndPasswordAuthFilter() throws Exception {
         final JwtUsernameAndPasswordAuthFilter filter = new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtConfig, secretKey);
-        filter.setFilterProcessesUrl("/api/react/user/login");
+//        filter.setFilterProcessesUrl("/api/react/user/login");
 
         return filter;
     }

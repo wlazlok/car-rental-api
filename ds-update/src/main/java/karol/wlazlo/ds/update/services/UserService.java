@@ -33,28 +33,27 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     public Response registerUser(RegisterForm form) {
-        //todo: obsługa błędów, errory po errorCode
-        //todo wyslanie mejla z linkiem, zablokowanie konta do czasu aktywowania!
-
         Response response = new Response();
 
         Optional<AppUser> user = appUserRepository.findAppUserByEmail(form.getEmail());
 
         if (user.isPresent()) {
-            response.setErrors(List.of(ErrorMessage.builder()
-                    .message("Użytkownik o podanym adresie email istnieje")
-                    .build()));
-
-            return response;
+            throw new CarRentalException("msg.user.email.exist");
         }
 
-        AppUser savedUser = appUserRepository.save(mapRegisterFormToAppUser(form, null));
+        try {
+            AppUser savedUser = appUserRepository.save(mapRegisterFormToAppUser(form, null));
 
-        emailService.sendActivateEmail(savedUser);
+            emailService.sendActivateEmail(savedUser);
 
-        response.setSuccessMessage("Link aktywujący został wysłany na adres e-mail");
+            response.setSuccessMessage("Link aktywujący został wysłany na adres e-mail");
 
-        return response;
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.warn("user.service.register.user.err {}", ex.getLocalizedMessage());
+            throw new CarRentalException("msg.err.register.user");
+        }
     }
 
     public Response activateUser(String uuid, Long userId) {
@@ -90,11 +89,9 @@ public class UserService {
     }
 
     public Response resetPasswordAuthenticate(String email) {
-        //todo: obsługa błędów, przeniesnie logiki do serwisów,errory po errorCode
-        //todo wyslanie mejla z linkiem, zablokowanie konta do czasu aktywowania!
-
         Optional<AppUser> foundUser = appUserRepository.findAppUserByEmail(email);
         Response response = new Response();
+
         if (foundUser.isEmpty()) {
             throw new CarRentalException("msg.err.incorrect.email");
         }
@@ -178,7 +175,7 @@ public class UserService {
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
             throw new CarRentalException("msg.password.not.equal");
         }
-        //todo: obsluga bledow na ui, nie zminia hasla poprawnie
+
         try {
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             appUserRepository.save(user);
@@ -208,9 +205,14 @@ public class UserService {
                 user.setAccountNonExpired(!user.isAccountNonExpired());
                 return appUserRepository.save(user);
             }
+            case "ADMIN":
+            case "USER": {
+                user.setRole(type.equals("ADMIN") ? Role.ADMIN : Role.USER);
+                return appUserRepository.save(user);
+            }
         }
 
-        return null;
+        return user;
     }
 
     private AppUser mapRegisterFormToAppUser(RegisterForm form, AppUser isNew) {
