@@ -7,7 +7,7 @@
     <groupId>karol.wlazlo</groupId>
     <artifactId>cart-rental-api</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 
     <modules>
         <module>ds-model</module>
