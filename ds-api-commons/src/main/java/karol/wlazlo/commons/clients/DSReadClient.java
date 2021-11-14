@@ -49,5 +49,5 @@ public interface DSReadClient {
     ResponseEntity<AdminUserResponse> getUsers();
 
     @GetMapping("/user")
-    ResponseEntity<AppUser> getUserById(@RequestParam("uId") Long userId);
+    ResponseEntity<?> getUserById(@RequestParam("uId") Long userId);
 }

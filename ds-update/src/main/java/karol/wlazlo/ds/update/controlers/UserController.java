@@ -7,6 +7,7 @@ import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
+import karol.wlazlo.model.Response.AbstractResponse;
 import karol.wlazlo.model.Response.Response;
 import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
@@ -132,7 +133,13 @@ public class UserController {
     }
 
     @PostMapping("/control")
-    public AppUser editControl(@RequestParam("type") String type, @RequestParam("uId") Long userId) {
-        return userService.editUserControl(type, userId);
+    public ResponseEntity<?> editControl(@RequestParam("type") String type, @RequestParam("uId") Long userId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.editUserControl(type, userId));
+        } catch (Exception ex) {
+            AbstractResponse response = new AbstractResponse();
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

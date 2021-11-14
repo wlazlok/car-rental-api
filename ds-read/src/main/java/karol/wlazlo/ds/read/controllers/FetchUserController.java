@@ -4,6 +4,7 @@ import karol.wlazlo.commons.repositories.AppUserRepository;
 import karol.wlazlo.ds.read.services.UserService;
 import karol.wlazlo.model.AdminUserResponse.AdminUserResponse;
 import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
+import karol.wlazlo.model.Response.AbstractResponse;
 import karol.wlazlo.model.Security.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,12 +54,19 @@ public class FetchUserController {
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
     @GetMapping
-    public ResponseEntity<AppUser> getUserById(@RequestParam("uId") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(appUserRepository.getById(userId));
+    public ResponseEntity<?> getUserById(@RequestParam("uId") Long userId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
+        } catch (Exception ex) {
+            AbstractResponse response = new AbstractResponse();
+            response.setErrors(List.of(mapErrorMessage(ex)));
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

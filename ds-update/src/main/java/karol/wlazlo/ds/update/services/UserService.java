@@ -190,29 +190,36 @@ public class UserService {
     }
 
     public AppUser editUserControl(String type, Long userId) {
-        AppUser user = appUserRepository.getById(userId);
+        try {
 
-        switch (type) {
-            case "enabled" : {
-                user.setEnabled(!user.isEnabled());
-                return appUserRepository.save(user);
+            AppUser user = appUserRepository.getById(userId);
+
+            switch (type) {
+                case "enabled": {
+                    user.setEnabled(!user.isEnabled());
+                    return appUserRepository.save(user);
+                }
+                case "credentialsNonExpired": {
+                    user.setCredentialsNonExpired(!user.isCredentialsNonExpired());
+                    return appUserRepository.save(user);
+                }
+                case "accountNonExpired": {
+                    user.setAccountNonExpired(!user.isAccountNonExpired());
+                    return appUserRepository.save(user);
+                }
+                case "ADMIN":
+                case "USER": {
+                    user.setRole(type.equals("ADMIN") ? Role.ADMIN : Role.USER);
+                    return appUserRepository.save(user);
+                }
             }
-            case "credentialsNonExpired" : {
-                user.setCredentialsNonExpired(!user.isCredentialsNonExpired());
-                return appUserRepository.save(user);
-            }
-            case "accountNonExpired" : {
-                user.setAccountNonExpired(!user.isAccountNonExpired());
-                return appUserRepository.save(user);
-            }
-            case "ADMIN":
-            case "USER": {
-                user.setRole(type.equals("ADMIN") ? Role.ADMIN : Role.USER);
-                return appUserRepository.save(user);
-            }
+
+            return user;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.warn("user.service.update.user.control.err {}", ex.getLocalizedMessage());
+            throw new CarRentalException("msg.err.update.user");
         }
-
-        return user;
     }
 
     private AppUser mapRegisterFormToAppUser(RegisterForm form, AppUser isNew) {

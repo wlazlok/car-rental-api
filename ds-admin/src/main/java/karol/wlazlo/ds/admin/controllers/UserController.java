@@ -5,7 +5,6 @@ import karol.wlazlo.commons.clients.DSUpdateClient;
 import karol.wlazlo.model.AdminUserResponse.AdminUserResponse;
 import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.Response.Response;
-import karol.wlazlo.model.Security.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class UserController {
     private DSReadClient dsReadClient;
 
     @PostMapping("/control")
-    public AppUser editUserControl(@RequestParam("type") String type, @RequestParam("uId") Long userId) {
+    public ResponseEntity<?> editUserControl(@RequestParam("type") String type, @RequestParam("uId") Long userId) {
         return dsUpdateClient.editControl(type, userId);
     }
 
@@ -38,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<AppUser> getUserById(@RequestParam("uId") Long userId) {
+    public ResponseEntity<?> getUserById(@RequestParam("uId") Long userId) {
         return dsReadClient.getUserById(userId);
     }
 

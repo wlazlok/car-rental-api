@@ -40,7 +40,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -55,7 +55,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 }
