@@ -28,7 +28,7 @@ public class ImagesController {
     @PostMapping(value = "/upload/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductItemResponse> uploadImage(@PathVariable("productId") Long productId,
                                                            HttpServletRequest servletRequest) throws ServletException, IOException {
-
+        log.info("admin.images.upload.image productId {}", productId);
         ProductItemResponse response = uploadImageService.upload(servletRequest, productId);
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -40,6 +40,7 @@ public class ImagesController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ProductItemResponse> deleteImage(@RequestParam("id") String id, @RequestParam("pId") Long productId) {
+        log.info("admin.images.delete.image id {} productId {}", id, productId);
         ProductItemResponse response = dsUpdateClient.deleteImage(id, productId).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {

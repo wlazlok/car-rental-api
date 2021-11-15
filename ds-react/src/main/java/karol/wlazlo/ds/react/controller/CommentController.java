@@ -27,6 +27,7 @@ public class CommentController {
 
     @PostMapping("/add")
     public ResponseEntity<ProductItemResponse> addComment(@RequestBody CommentRequest commentRequest) throws UserContextException {
+        log.info("api.react.comment.add.comment productId {} user {}, message {}", commentRequest.getProductId(), commentRequest.getUser().getId(), commentRequest.getMessage());
         commentRequest.setUser(userContextService.getUserForContext());
 
         ProductItemResponse response = dsUpdateClient.addCommentToProduct(commentRequest).getBody();

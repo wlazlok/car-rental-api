@@ -68,10 +68,6 @@ public class AppUser implements UserDetails {
 
     private UUID resetPasswordUUID;
 
-//    private UUID activateAccountUUID;
-//
-//    private UUID resetPasswordUUID;
-
     @OneToMany(mappedBy = "userId", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<CommentItem> comments;

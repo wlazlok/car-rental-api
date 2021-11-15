@@ -38,6 +38,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm) {
+        log.info("api.react.user.register email {}", registerForm.getEmail());
         Response response = dsUpdateClient.registerUser(registerForm).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -49,6 +50,7 @@ public class UserController {
 
     @GetMapping("/activate")
     public ResponseEntity<Response> activateUser(@RequestParam("id") String uuid, @RequestParam("usr") Long userId) {
+        log.info("api.react.user.activate id {} userId {}", uuid, userId);
         Response response =  dsUpdateClient.activateUser(uuid, userId).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -60,6 +62,7 @@ public class UserController {
 
     @PostMapping("/reset-password/auth")
     public ResponseEntity<Response> resetPasswordAuth(@RequestBody ResetPasswordFormAuth resetPasswordFormAuth) {
+        log.info("api.react.user.reset-password.auth email {}", resetPasswordFormAuth.getEmail());
         Response response = dsUpdateClient.resetPasswordAuthenticate(resetPasswordFormAuth).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -73,6 +76,7 @@ public class UserController {
     public ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm,
                                                   @RequestParam("id") String uuid,
                                                   @RequestParam("usr") Long userId) {
+        log.info("api.react.user.reset-password id {} userId {}", uuid, userId);
         Response response = dsUpdateClient.resetPassword(resetPasswordForm, uuid, userId).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -84,6 +88,7 @@ public class UserController {
 
     @PostMapping("/update")
     public ResponseEntity<AppUserResponse> updateUser(@RequestBody RegisterForm form) {
+        log.info("api.react.user.update email {}", form.getEmail());
         AppUserResponse response = dsUpdateClient.updateUser(form).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -95,6 +100,7 @@ public class UserController {
 
     @PostMapping("/change-password")
     public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request) throws UserContextException {
+        log.info("api.react.user.change-password");
         Response response = dsUpdateClient.changePassword(request, userContextService.getUserForContext().getUsername()).getBody();
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {
@@ -116,6 +122,7 @@ public class UserController {
 
     @PostMapping("/avatar")
     public ResponseEntity<AppUserResponse> uploadAvatar(HttpServletRequest servletRequest) throws UserContextException, ServletException, IOException {
+        log.info("api.react.user.upload.image");
         AppUserResponse response = uploadImageService.uploadAvatar(servletRequest, userContextService.getUserForContext().getId());
 
         if (response.getErrors() != null && !response.getErrors().isEmpty()) {

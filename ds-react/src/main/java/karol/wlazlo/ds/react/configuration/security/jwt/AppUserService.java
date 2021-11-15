@@ -25,7 +25,6 @@ public class AppUserService implements UserDetailsService {
             user = dsReadClient.getUserByEmail(ResetPasswordFormAuth.builder().email(email).build());
         } catch (Exception ex) {
             ex.printStackTrace();
-            //todo obsluga wyjątków logi
             log.info("load user exception: {}", ex.getMessage());
             throw new UsernameNotFoundException("usre not found");
         }

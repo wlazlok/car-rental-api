@@ -28,6 +28,7 @@ public class ProductController {
 
     @GetMapping("/product/{productId}/details")
     public ResponseEntity<ProductItemResponse> getProductDetails(@PathVariable Long productId) {
+        log.info("api.react.product.details productId {}", productId);
         return dsReadClient.fetchProductDetails(productId);
     }
 
