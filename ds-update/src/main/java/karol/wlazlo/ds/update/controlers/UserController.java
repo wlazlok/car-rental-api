@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static karol.wlazlo.commons.utils.HandleErrorMessage.mapErrorMessage;
@@ -123,7 +124,7 @@ public class UserController {
         Response response = new Response();
 
         try {
-            response = userService.changePassword(request,  appUserRepository.getById(userId).getUsername());
+            response = userService.changePassword(request, appUserRepository.getById(userId).getUsername());
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
@@ -138,6 +139,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userService.editUserControl(type, userId));
         } catch (Exception ex) {
             AbstractResponse response = new AbstractResponse();
+            response.setErrors(List.of(mapErrorMessage(ex)));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/avatar/{userId}")
+    public ResponseEntity<AppUserResponse> uploadAvatar(HttpServletRequest request, @PathVariable("userId") Long userId) {
+        AppUserResponse response = new AppUserResponse();
+
+        try {
+            response = userService.uploadAvatar(request, userId);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception ex) {
             response.setErrors(List.of(mapErrorMessage(ex)));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

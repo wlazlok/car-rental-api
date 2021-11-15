@@ -2,6 +2,7 @@ package karol.wlazlo.ds.react.services;
 
 import karol.wlazlo.commons.clients.DSReadClient;
 import karol.wlazlo.commons.exceptions.UserContextException;
+import karol.wlazlo.model.AppUserResponse.AppUserBasicResponse;
 import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,15 @@ public class UserContextService {
             throw new UserContextException("user.service.get.user.context.exception");
         }
 
+    }
+
+    public AppUserBasicResponse getBasic() throws UserContextException {
+        AppUser user = getUserForContext();
+
+        return AppUserBasicResponse.builder()
+                .name(user.getName())
+                .username(user.getUsername())
+                .avatarUrl(user.getAvatarUrl())
+                .build();
     }
 }

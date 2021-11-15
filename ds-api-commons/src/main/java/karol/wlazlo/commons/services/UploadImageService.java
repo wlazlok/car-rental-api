@@ -1,7 +1,9 @@
 package karol.wlazlo.commons.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import karol.wlazlo.model.AppUserResponse.AppUserResponse;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
+import karol.wlazlo.model.Security.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -39,5 +41,23 @@ public class UploadImageService {
         CloseableHttpResponse response = httpClient.execute(httpPost);
 
         return new ObjectMapper().readValue(response.getEntity().getContent(), ProductItemResponse.class);
+    }
+
+    public AppUserResponse uploadAvatar(HttpServletRequest servletRequest, Long userId) throws ServletException, IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+
+        HttpPost httpPost = new HttpPost(URI.create("http://localhost:8911/ds/update/user/avatar/" + userId));
+
+        multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+        Part part = servletRequest.getPart("file");
+
+        multipartEntity.addPart(part.getName(), new InputStreamBody(part.getInputStream(), java.net.URLEncoder.encode(part.getSubmittedFileName(), StandardCharsets.UTF_8)));
+
+        httpPost.setEntity(multipartEntity.build());
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+
+        return new ObjectMapper().readValue(response.getEntity().getContent(), AppUserResponse.class);
     }
 }

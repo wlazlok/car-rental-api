@@ -2,6 +2,7 @@ package karol.wlazlo.ds.update.services;
 
 import karol.wlazlo.commons.exceptions.CarRentalException;
 import karol.wlazlo.commons.repositories.AppUserRepository;
+import karol.wlazlo.model.AppUserResponse.AppUserResponse;
 import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.ErrorMessage.ErrorMessage;
 import karol.wlazlo.model.Register.RegisterForm;
@@ -11,10 +12,12 @@ import karol.wlazlo.model.Security.AppUser;
 import karol.wlazlo.model.Security.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +31,9 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     //todo: przenieść do konfiguracji
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -182,7 +188,7 @@ public class UserService {
             response.setSuccessMessage("Hasło zmienione pomyślnie");
 
             return response;
-        } catch (Exception ex)  {
+        } catch (Exception ex) {
             ex.printStackTrace();
             log.warn("user.service.change.password.err {}", ex.getLocalizedMessage());
             throw new CarRentalException("msg.err.change.password.err");
@@ -191,7 +197,6 @@ public class UserService {
 
     public AppUser editUserControl(String type, Long userId) {
         try {
-
             AppUser user = appUserRepository.getById(userId);
 
             switch (type) {
@@ -222,6 +227,29 @@ public class UserService {
         }
     }
 
+    public AppUserResponse uploadAvatar(HttpServletRequest request, Long userId) {
+        try {
+            AppUser user = appUserRepository.getById(userId);
+
+            if (StringUtils.isNotBlank(user.getAvatarUrl())) {
+                cloudinaryService.delete(user.getAvatarUrl());
+            }
+
+            String id = cloudinaryService.upload(request.getPart("file").getInputStream());
+
+            user.setAvatarUrl(id);
+
+            return AppUserResponse
+                    .builder()
+                    .user(appUserRepository.save(user))
+                    .build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log.warn("user.serivce.upload.avatar.err {}", ex.getLocalizedMessage());
+            throw new CarRentalException("msg.err.cloudinary.service.upload");
+        }
+    }
+
     private AppUser mapRegisterFormToAppUser(RegisterForm form, AppUser isNew) {
         //username jako email
         return AppUser.builder()
@@ -236,7 +264,7 @@ public class UserService {
                 .appNumber(form.getAppNumber())
                 .postalCode(form.getPostalCode())
                 .city(form.getCity())
-                .activateAccountUUID(isNew == null ? UUID.randomUUID(): null)
+                .activateAccountUUID(isNew == null ? UUID.randomUUID() : null)
                 .role(isNew == null ? Role.USER : isNew.getRole())
                 .isAccountNonExpired(isNew != null && isNew.isAccountNonExpired())
                 .isAccountNonLocked(isNew != null && isNew.isAccountNonLocked())

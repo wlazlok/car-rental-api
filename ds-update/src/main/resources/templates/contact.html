@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+        body {
+            font-family: calibri, 'DejaVu Sans', Arial, Helvetica, sans-serif;
+            /*background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);*/
+        }
+
+    </style>
+
+</head>
+<body>
+<div>
+    <p>Otrzymano nowe zapytanie!</p>
+    <a th:text="'Imię: ' + ${firstName}"></a> </br>
+    <a th:text="'Nazwisko: ' +${secondName}"></a> </br>
+    <a th:text="'Email: ' +${emailAddress}"></a> </br>
+    <a th:text="'Nr. telefonu: ' +${phone}"></a> </br></br>
+    <a th:text="'Treść: ' +${content}"></a> </br>
+</div>
+</body>
+</html>

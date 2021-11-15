@@ -2,7 +2,9 @@ package karol.wlazlo.ds.react.controller;
 
 import karol.wlazlo.commons.clients.DSUpdateClient;
 import karol.wlazlo.commons.exceptions.UserContextException;
+import karol.wlazlo.commons.services.UploadImageService;
 import karol.wlazlo.ds.react.services.UserContextService;
+import karol.wlazlo.model.AppUserResponse.AppUserBasicResponse;
 import karol.wlazlo.model.AppUserResponse.AppUserResponse;
 import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.Register.RegisterForm;
@@ -16,6 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/react/user")
@@ -26,6 +32,9 @@ public class UserController {
 
     @Autowired
     private UserContextService userContextService;
+
+    @Autowired
+    private UploadImageService uploadImageService;
 
     @PostMapping("/register")
     public ResponseEntity<Response> registerUser(@RequestBody RegisterForm registerForm) {
@@ -99,4 +108,21 @@ public class UserController {
     public ResponseEntity<AppUser> getUserInfo() throws UserContextException {
         return ResponseEntity.status(HttpStatus.OK).body(userContextService.getUserForContext());
     }
+
+    @GetMapping("/info/basic")
+    public ResponseEntity<AppUserBasicResponse> getUserInfoBasic() throws UserContextException {
+        return ResponseEntity.status(HttpStatus.OK).body(userContextService.getBasic());
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<AppUserResponse> uploadAvatar(HttpServletRequest servletRequest) throws UserContextException, ServletException, IOException {
+        AppUserResponse response = uploadImageService.uploadAvatar(servletRequest, userContextService.getUserForContext().getId());
+
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }

@@ -34,6 +34,7 @@ public class CommentService {
             commentItem.setDate(new Date());
             commentItem.setUserId(request.getUser());
             commentItem.setAuthor(String.format("%s %s", request.getUser().getName(), request.getUser().getSurname()));
+            commentItem.setAvatarId(request.getUser().getAvatarUrl());
 
             commentItemRepository.save(commentItem);
 

@@ -1,7 +1,6 @@
 package karol.wlazlo.model.AppUserResponse;
 
 import karol.wlazlo.model.Response.AbstractResponse;
-import karol.wlazlo.model.Security.AppUser;
 import lombok.*;
 
 @Getter
@@ -9,7 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppUserResponse extends AbstractResponse {
+public class AppUserBasicResponse extends AbstractResponse {
 
-    private AppUser user;
+    private String username;
+    private String name;
+    private String avatarUrl;
 }

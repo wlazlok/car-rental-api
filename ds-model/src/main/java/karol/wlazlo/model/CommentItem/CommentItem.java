@@ -28,6 +28,8 @@ public class CommentItem {
 
     private String author;
 
+    private String avatarId;
+
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     @JsonIgnore

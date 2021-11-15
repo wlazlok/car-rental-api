@@ -3,6 +3,8 @@ package karol.wlazlo.commons.clients;
 import karol.wlazlo.model.AppUserResponse.AppUserResponse;
 import karol.wlazlo.model.ChangePassword.ChangePasswordRequest;
 import karol.wlazlo.model.CommentItem.CommentRequest;
+import karol.wlazlo.model.ContactForm.ContactForm;
+import karol.wlazlo.model.ContactForm.ContactFormResponse;
 import karol.wlazlo.model.ProductItem.DeleteProductItemResponse;
 import karol.wlazlo.model.ProductItem.ProductItem;
 import karol.wlazlo.model.ProductItem.ProductItemResponse;
@@ -10,7 +12,6 @@ import karol.wlazlo.model.Register.RegisterForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordForm;
 import karol.wlazlo.model.ResetPassword.ResetPasswordFormAuth;
 import karol.wlazlo.model.Response.Response;
-import karol.wlazlo.model.Security.AppUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,4 +56,7 @@ public interface DSUpdateClient {
 
     @PostMapping("/user/admin/change-password")
     ResponseEntity<Response> changePasswordAdmin(@RequestBody ChangePasswordRequest request, @RequestParam("uId") Long userId);
+
+    @PostMapping("/contact")
+    ResponseEntity<ContactFormResponse> sendEmail(@RequestBody ContactForm form);
 }

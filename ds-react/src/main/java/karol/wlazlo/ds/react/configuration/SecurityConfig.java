@@ -29,7 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/react/products/images", "/api/react/contact-form", "/api/react/user/reset-password", "/api/react/user/register", "/api/react/user/activate",
             "/api/react/user/reset-password"};
 
-    private final String[] authPaths = new String[]{"/api/react/user/update", "/api/react/user/info", "/api/react/comment/add", "/api/react/user/change-password"};
+    private final String[] authPaths = new String[]{"/api/react/user/update", "/api/react/user/info", "/api/react/comment/add", "/api/react/user/change-password",
+            "/api/react/user/info/basic"};
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserService appUserService;

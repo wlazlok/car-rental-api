@@ -54,6 +54,8 @@ public class AppUser implements UserDetails {
 
     private String city;
 
+    private String avatarUrl;
+
     private boolean isAccountNonExpired;
 
     private boolean isAccountNonLocked;
