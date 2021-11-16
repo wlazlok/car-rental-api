@@ -110,7 +110,7 @@ public class UserController {
         Response response = new Response();
 
         try {
-            response = userService.changePassword(request, username);
+            response = userService.changePassword(request, username, false);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
@@ -124,7 +124,7 @@ public class UserController {
         Response response = new Response();
 
         try {
-            response = userService.changePassword(request, appUserRepository.getById(userId).getUsername());
+            response = userService.changePassword(request, appUserRepository.getById(userId).getUsername(), true);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {

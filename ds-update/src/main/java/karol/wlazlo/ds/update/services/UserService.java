@@ -166,7 +166,7 @@ public class UserService {
         }
     }
 
-    public Response changePassword(ChangePasswordRequest request, String username) {
+    public Response changePassword(ChangePasswordRequest request, String username, boolean isAdmin) {
         Response response = new Response();
 
         if (username == null) {
@@ -175,7 +175,7 @@ public class UserService {
 
         AppUser user = appUserRepository.getAppUserByUsername(username);
 
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!isAdmin && !passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new CarRentalException("msg.err.incorrect.old.password");
         }
         if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
