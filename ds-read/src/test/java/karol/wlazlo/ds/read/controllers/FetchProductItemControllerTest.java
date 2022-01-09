@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static karol.wlazlo.ds.read.MockModel.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -40,29 +39,6 @@ public class FetchProductItemControllerTest extends ControllerMockConfig {
     @BeforeEach
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
-    }
-
-    @Test
-    void fetchProductDetails() throws Exception {
-        //given
-        ProductItemResponse productItemResponse = generateProductItemResponse();
-        Long productId = 1L;
-
-        //when
-        when(productService.getProductDetails(anyLong())).thenReturn(productItemResponse);
-
-        //then
-        MvcResult result = mockMvc.perform(get(PATH + "/1/details")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("productId", String.valueOf(productId)))
-                .andExpect(status().is2xxSuccessful())
-                .andReturn();
-
-        ProductItemResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ProductItemResponse.class);
-
-        assertNotNull(response);
-        assertNull(response.getErrors());
-        verify(productService, times(1)).getProductDetails(anyLong());
     }
 
     @Test
@@ -88,6 +64,31 @@ public class FetchProductItemControllerTest extends ControllerMockConfig {
 
         assertNotNull(response);
         assertNotNull(response.getErrors());
+        assertFalse(response.getErrors().isEmpty());
+        assertEquals(1, response.getErrors().size());
+        verify(productService, times(1)).getProductDetails(anyLong());
+    }
+
+    @Test
+    void fetchProductDetails() throws Exception {
+        //given
+        ProductItemResponse productItemResponse = generateProductItemResponse();
+        Long productId = 1L;
+
+        //when
+        when(productService.getProductDetails(anyLong())).thenReturn(productItemResponse);
+
+        //then
+        MvcResult result = mockMvc.perform(get(PATH + "/1/details")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("productId", String.valueOf(productId)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        ProductItemResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ProductItemResponse.class);
+
+        assertNotNull(response);
+        assertNull(response.getErrors());
         verify(productService, times(1)).getProductDetails(anyLong());
     }
 

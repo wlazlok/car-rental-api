@@ -32,7 +32,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
         super.setAuthenticationManager(authenticationManager);
     }
 
-
     public JwtUsernameAndPasswordAuthFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey) {
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
@@ -65,11 +64,10 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
-                .signWith(secretKey) //todo: key
+                .signWith(secretKey)
                 .compact();
 
         response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
-        //todo: naprawić odczytanie w reacie z headera
         response.getWriter().write(token);
         response.getWriter().flush();
     }
